@@ -18,6 +18,6 @@ func (article *Article) Save() {
 // GetPlanPublushArticle 获取计划发布的 []Article
 func (article *Article) GetPlanPublushArticle() []Article {
 	var articles []Article
-	DB().Where("publish_at = 0").Order("id asc").Limit(100).Find(&articles)
+	DB().Where("publish_at = 0").Order("id asc").Limit(10).Find(&articles)
 	return articles
 }
