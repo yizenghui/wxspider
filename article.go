@@ -5,10 +5,16 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
+	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/yizenghui/sda/wechat"
 )
+
+func init() {
+	DB().AutoMigrate(&Article{})
+
+}
 
 //SpiderArticle 采集文章并保存到本地
 func SpiderArticle(urlStr string) error {
@@ -32,52 +38,18 @@ func SpiderArticle(urlStr string) error {
 		a.Author = article.Author
 		a.PubAt = article.PubAt
 		a.Save()
+		log.Println("spider", a.ID, a.Title, a.URL)
 	}
 	return nil
 }
 
-//PublishArticle 采集文章并保存到本地
+//PublishArticle 发布本地文章
 func PublishArticle() error {
-	// if post.State == 0 { // 检查提交状态
 	var a Article
-
 	rows := a.GetPlanPublushArticle()
 	for _, row := range rows {
 		PostArticle(row)
 	}
-
-	// article, err := wechat.Find(urlStr)
-	// if err == nil {
-
-	// 	if article.URL == "" {
-	// 		return errors.New("不支持该链接！")
-	// 	}
-
-	// 	a.GetArticleByURL(article.URL)
-	// 	a.AppID = article.AppID
-	// 	a.AppName = article.AppName
-	// 	a.RoundHead = article.RoundHead
-	// 	a.OriHead = article.OriHead
-	// 	a.URL = article.URL
-	// 	a.Title = article.Title
-	// 	a.Intro = article.Intro
-	// 	a.Cover = article.Cover
-	// 	a.Author = article.Author
-	// 	a.PubAt = article.PubAt
-	// 	// i64, err := strconv.ParseInt(article.PubAt, 10, 64)
-	// 	// if err != nil {
-	// 	// 	// fmt.Println(err)
-	// 	// 	return errors.New("时间转化失败")
-	// 	// }
-	// 	// // a.PublishAt = time.Unix(i64, 0)
-	// 	// a.PubAt = i64
-
-	// 	// panic(a.ID)
-
-	// 	a.Save()
-	// 	// fmt.Println(a)
-	// }
-	// }
 	return nil
 }
 
@@ -86,16 +58,43 @@ func PostArticle(article Article) error {
 	client := http.Client{}
 	data := make(url.Values)
 	data["title"] = []string{article.Title}
-	resp, err := client.PostForm("http://wxapi.oo/api/v1/article", data)
+	data["app_id"] = []string{article.AppID}
+	data["app_name"] = []string{article.AppName}
+	data["app_cover"] = []string{article.OriHead}
+	data["url"] = []string{article.URL}
+	data["intro"] = []string{article.Intro}
+	data["cover"] = []string{article.Cover}
+	data["author"] = []string{article.Author}
+
+	i64, err := strconv.ParseInt(article.PubAt, 10, 64)
 	if err != nil {
-		log.Printf("登录时提交数据异常")
+		// fmt.Println(err)
+		return errors.New("时间转化失败")
 	}
-	formPost, err := goquery.NewDocumentFromReader(resp.Body)
+	pubAt := time.Unix(i64, 0).Format("2006-01-02 15:04:05")
 
+	data["pub_at"] = []string{pubAt}
+	data["category"] = []string{`测试`}
+	// data["tags"] = []string{`php`, `golang`}
+
+	// tags category
+
+	resp, err := client.PostForm("http://wxapi.cc:626/api/v1/article", data)
 	resp.Body.Close()
+	if err != nil {
+		// log.Println(" %s  ", err.Error)
+		return err
+	}
 
-	postMsg, err := formPost.Html()
-	// panic(err)
-	log.Println(" %s  ", postMsg)
+	article.PublishAt = time.Now().Unix()
+	article.Save()
+	log.Println("post", article.ID, article.Title, article.URL, article.PublishAt)
+	// formPost, err := goquery.NewDocumentFromReader(resp.Body)
+
+	// resp.Body.Close()
+
+	// postMsg, err := formPost.Html()
+	// // panic(err)
+	// log.Println(" %s  ", postMsg)
 	return nil
 }

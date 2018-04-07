@@ -9,10 +9,6 @@ import (
 	"testing"
 )
 
-func init() {
-	DB().AutoMigrate(&Article{})
-
-}
 func Test_SpiderArticle(t *testing.T) {
 	fmt.Println(SpiderArticle(`http://mp.weixin.qq.com/s/qlU4E2WzvYrnmuxiBwxavw`))
 }
