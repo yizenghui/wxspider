@@ -79,7 +79,7 @@ func PostArticle(article Article) error {
 
 	// tags category
 
-	resp, err := client.PostForm("http://wxapi.cc:626/api/v1/article", data)
+	resp, err := client.PostForm("http://wxapi.readfollow.com/api/v1/article", data)
 	resp.Body.Close()
 	if err != nil {
 		// log.Println(" %s  ", err.Error)
