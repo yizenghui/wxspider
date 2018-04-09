@@ -18,6 +18,7 @@ type Article struct {
 	AppID     string // 公众号ID
 	Cover     string // 文章封面
 	Intro     string // 描述
+	Cont      string // 公众号文章内容(文本)
 	PubAt     string // 发布时间
 	URL       string `gorm:"type:varchar(255);unique_index"` // 微信文章链接地址
 	RoundHead string // 圆头像

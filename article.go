@@ -31,6 +31,7 @@ func SpiderArticle(urlStr string) error {
 		a.Cover = article.Cover
 		a.Author = article.Author
 		a.PubAt = article.PubAt
+		a.Cont = article.Content
 		a.Save()
 	}
 	return nil
