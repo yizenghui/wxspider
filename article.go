@@ -48,13 +48,19 @@ func PublishArticle() error {
 	var a Article
 	rows := a.GetPlanPublushArticle()
 	for _, row := range rows {
-		PostArticle(row)
+		e := PostArticle(row)
+		if e == nil {
+			row.PublishAt = time.Now().Unix()
+			row.Save()
+			log.Println("post", row.ID, row.Title, row.URL, row.PublishAt)
+		}
 	}
 	return nil
 }
 
 //PostArticle 采集文章并保存到本地
 func PostArticle(article Article) error {
+
 	client := http.Client{}
 	data := make(url.Values)
 	data["title"] = []string{article.Title}
@@ -86,9 +92,6 @@ func PostArticle(article Article) error {
 		return err
 	}
 
-	article.PublishAt = time.Now().Unix()
-	article.Save()
-	log.Println("post", article.ID, article.Title, article.URL, article.PublishAt)
 	// formPost, err := goquery.NewDocumentFromReader(resp.Body)
 
 	// resp.Body.Close()
