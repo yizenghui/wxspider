@@ -12,7 +12,7 @@ import (
 	"github.com/Sirupsen/logrus"
 
 	"github.com/Kevingong2013/wechat"
-	swc "github.com/yizenghui/sda/wechat"
+	wxs "github.com/yizenghui/wxspider"
 )
 
 var logger = logrus.WithFields(logrus.Fields{
@@ -86,14 +86,8 @@ func (g *guard) autoAcceptAddFirendRequest(msg wechat.EventMsgData) {
 }
 
 func pushLink(u string) {
-	a, e := swc.Find(u)
-	// link := url.QueryEscape(u)
-	// doc, err := goquery.NewDocument(fmt.Sprintf("https://api.readfollow.com/fetch?url=%v", link))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(doc.Text())
-	// fmt.Println(u)
+	// fmt.Println("push url:", u)
+	wxs.SpiderArticle(u)
 }
 
 func RemoveDuplicatesAndEmpty(a []string) (ret []string) {
@@ -122,8 +116,15 @@ func regAndPostWxLink(content string) {
 	}
 }
 
-func main() {
+func postLocationArticle() {
+	ticker := time.NewTicker(time.Second * 30)
+	for _ = range ticker.C {
+		go wxs.PublishArticle()
+	}
+}
 
+func main() {
+	go postLocationArticle()
 	options := wechat.DefaultConfigure()
 	options.Debug = false
 	bot, err := wechat.AwakenNewBot(options)
