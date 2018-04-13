@@ -37,7 +37,7 @@ func SpiderArticle(urlStr string) error {
 		a.Cover = article.Cover
 		a.Author = article.Author
 		a.PubAt = article.PubAt
-		a.Cont = article.Content
+		// a.Cont = article.Content
 		a.Save()
 		log.Println("spider", a.ID, a.Title, a.URL)
 	}
