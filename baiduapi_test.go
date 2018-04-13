@@ -17,7 +17,7 @@ import (
 )
 
 func Test_XTags(t *testing.T) {
-	 tags := AiTags{}
+	tags := AiTags{}
 	tt := `{"log_id": 7971186989667946038}`
 	rbyte := []byte(tt)
 
@@ -25,6 +25,14 @@ func Test_XTags(t *testing.T) {
 	t.Fatal(tags)
 }
 
+func Test_XCategories(t *testing.T) {
+	tags := AiCategories{}
+	tt := `{"log_id": 8163873610937095637, "item": {"lv2_tag_list": [{"score": 0.877436, "tag": "足球"}, {"score": 0.793682, "tag": "国际足球"}, {"score": 0.775911, "tag": "英超"}], "lv1_tag_list": [{"score": 0.824329, "tag": "体育"}]}}`
+	rbyte := []byte(tt)
+
+	json.Unmarshal(rbyte, &tags)
+	t.Fatal(tags)
+}
 func Test_GetTags(t *testing.T) {
 
 	tt := "iphone手机出现“白苹果”原因及解决办法，用苹果手机的可以看下"
@@ -84,6 +92,18 @@ func Test_GetTags(t *testing.T) {
 	t.Fatal(a.AiGetTags())
 	t.Fatal(a2.AiGetTags())
 	t.Fatal(a3.AiGetTags())
+}
+func Test_GetCategories(t *testing.T) {
+
+	tt := "欧洲冠军联赛"
+	cc := `欧洲冠军联赛是欧洲足球协会联盟主办的年度足球比赛，代表欧洲俱乐部足球最高荣誉和水平，被认为是全世界最高素质、最具影响力以及最高水平的俱乐部赛事，亦是世界上奖金最高的足球赛事和体育赛事之一。`
+
+	a := &Article{
+		Title: tt,
+		Cont:  cc,
+	}
+
+	t.Fatal(a.AiGetCategories())
 }
 
 func Test_Cp(t *testing.T) {
