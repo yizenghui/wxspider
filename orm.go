@@ -21,3 +21,10 @@ func (article *Article) GetPlanPublushArticle() []Article {
 	DB().Where("publish_at = 0").Order("id asc").Limit(10).Find(&articles)
 	return articles
 }
+
+// GetArticles 获取最新采集的微信公众号文章列表 []Article
+func (article *Article) GetArticles() []Article {
+	var articles []Article
+	DB().Order("id desc").Limit(100).Find(&articles)
+	return articles
+}

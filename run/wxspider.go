@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strconv"
 	"time"
 
 	_ "github.com/CodyGuo/godaemon"
 	"github.com/Sirupsen/logrus"
+	"github.com/labstack/echo"
 
 	"github.com/Kevingong2013/wechat"
 	wxs "github.com/yizenghui/wxspider"
@@ -123,8 +125,17 @@ func postLocationArticle() {
 	}
 }
 
+func web() {
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, wxs.GetArticles())
+	})
+	e.Logger.Fatal(e.Start(":3355"))
+}
+
 func main() {
 	go postLocationArticle()
+	go web()
 	options := wechat.DefaultConfigure()
 	options.Debug = false
 	bot, err := wechat.AwakenNewBot(options)

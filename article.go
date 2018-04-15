@@ -59,6 +59,13 @@ func PublishArticle() error {
 	return nil
 }
 
+//GetArticles 获取文章列表
+func GetArticles() []Article {
+	var a Article
+	rows := a.GetArticles()
+	return rows
+}
+
 //PostArticle 采集文章并保存到本地
 func PostArticle(article Article) error {
 
