@@ -96,8 +96,16 @@ func (a Article) AiGetTags() (tags AiTags, err error) {
 
 	data := make(map[string]interface{})
 
+	if a.Title == "" {
+		return
+	}
+	if a.Cont == "" {
+		return
+	}
 	data["title"] = a.Title
 	data["content"] = a.Cont
+
+	log.Println("tags: title,content", a.Title, a.Cont)
 
 	bytesData, err := json.Marshal(data)
 	if err != nil {
@@ -149,6 +157,14 @@ func (a Article) AiGetCategories() (tags AiCategories, err error) {
 	data["title"] = a.Title
 	data["content"] = a.Cont
 
+	if a.Title == "" {
+		return
+	}
+	if a.Cont == "" {
+		return
+	}
+	log.Println("categories: title,content", a.Title, a.Cont)
+
 	bytesData, err := json.Marshal(data)
 	if err != nil {
 		return
@@ -180,7 +196,7 @@ func (a Article) AiGetCategories() (tags AiCategories, err error) {
 
 	udata := ConvertStrEncode(str, "gbk", "utf-8")
 
-	log.Fatal(udata)
+	// log.Fatal(udata)
 	// t.Fatal(str)
 	rbyte := []byte(udata)
 
