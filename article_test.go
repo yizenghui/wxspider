@@ -5,15 +5,23 @@
 package wxspider
 
 import (
-	"fmt"
 	"testing"
 )
 
 func Test_SpiderArticle(t *testing.T) {
-	fmt.Println(SpiderArticle(`http://mp.weixin.qq.com/s/qlU4E2WzvYrnmuxiBwxavw`))
+	t.Fatal(SpiderArticle(`http://mp.weixin.qq.com/s/qlU4E2WzvYrnmuxiBwxavw`))
 }
 
 func Test_PostArticle(t *testing.T) {
 	err := PublishArticle()
 	t.Fatal(err)
+}
+
+func Test_PostArticleOne(t *testing.T) {
+	rows := GetArticles()
+	for _, row := range rows {
+		e := PostArticle(row)
+		t.Fatal(e)
+	}
+	t.Fatal(rows)
 }

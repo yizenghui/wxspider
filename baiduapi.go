@@ -3,9 +3,7 @@ package wxspider
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 
@@ -105,18 +103,24 @@ func (a Article) AiGetTags() (tags AiTags, err error) {
 	data["title"] = a.Title
 	data["content"] = a.Cont
 
-	log.Println("tags: title,content", a.Title, a.Cont)
+	//
+	if strings.Count(a.Cont, "") > 1000 {
+		contRune := []rune(a.Cont)
+		data["content"] = string(contRune[:1000])
+	}
+
+	//
+
+	// log.Println("tags: title,content", a.Title, a.Cont)
 
 	bytesData, err := json.Marshal(data)
 	if err != nil {
 		return
 	}
-	gbkBytesData, err := UTF8ToGBK(bytesData)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	reader := bytes.NewReader(gbkBytesData)
+
+	gbkBytesData := ConvertStrEncode(string(bytesData), "utf-8", "gbk")
+
+	reader := bytes.NewReader([]byte(gbkBytesData))
 
 	url := `https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?access_token=24.01a7fba39af897d7e5c3141b28962bd4.2592000.1526178157.282335-11067381`
 	// url := fmt.Sprintf(`https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?access_token=%v`, GetToken())
@@ -154,27 +158,29 @@ func (a Article) AiGetCategories() (tags AiCategories, err error) {
 
 	data := make(map[string]interface{})
 
-	data["title"] = a.Title
-	data["content"] = a.Cont
-
 	if a.Title == "" {
 		return
 	}
 	if a.Cont == "" {
 		return
 	}
-	log.Println("categories: title,content", a.Title, a.Cont)
+	data["title"] = a.Title
+	data["content"] = a.Cont
+
+	if strings.Count(a.Cont, "") > 1000 {
+		contRune := []rune(a.Cont)
+		data["content"] = string(contRune[:1000])
+	}
+	// log.Println("categories: title,content", a.Title, a.Cont)
 
 	bytesData, err := json.Marshal(data)
 	if err != nil {
 		return
 	}
-	gbkBytesData, err := UTF8ToGBK(bytesData)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	reader := bytes.NewReader(gbkBytesData)
+
+	gbkBytesData := ConvertStrEncode(string(bytesData), "utf-8", "gbk")
+
+	reader := bytes.NewReader([]byte(gbkBytesData))
 
 	url := `https://aip.baidubce.com/rpc/2.0/nlp/v1/topic?access_token=24.01a7fba39af897d7e5c3141b28962bd4.2592000.1526178157.282335-11067381`
 	// url := fmt.Sprintf(`https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?access_token=%v`, GetToken())
