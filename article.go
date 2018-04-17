@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/yizenghui/sda/wechat"
 )
 
@@ -133,19 +132,19 @@ func PostArticle(article Article) error {
 	// tags category
 
 	// resp, err := client.PostForm("http://wxapi.readfollow.com/api/v1/article", data)
-	resp, err := client.PostForm("http://wx.oo/api/links/", data)
-	// resp.Body.Close()
+	resp, err := client.PostForm("https://wx.readfollow.com/api/links/", data)
+	resp.Body.Close()
 	if err != nil {
 		// log.Println(" %s  ", err.Error)
-		// return err
+		return err
 	}
 
-	formPost, err := goquery.NewDocumentFromReader(resp.Body)
+	// formPost, err := goquery.NewDocumentFromReader(resp.Body)
 
-	resp.Body.Close()
+	// resp.Body.Close()
 
-	postMsg, err := formPost.Html()
-	// // panic(err)
-	log.Println(" %s  ", postMsg)
+	// postMsg, err := formPost.Html()
+	// // // panic(err)
+	// log.Println(" %s  ", postMsg)
 	return nil
 }

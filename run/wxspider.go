@@ -134,8 +134,8 @@ func web() {
 }
 
 func main() {
-	// go postLocationArticle()
-	// go web()
+	go postLocationArticle()
+	go web()
 	options := wechat.DefaultConfigure()
 	options.Debug = false
 	bot, err := wechat.AwakenNewBot(options)
