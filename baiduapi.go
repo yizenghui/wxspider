@@ -3,6 +3,7 @@ package wxspider
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -122,8 +123,8 @@ func (a Article) AiGetTags() (tags AiTags, err error) {
 
 	reader := bytes.NewReader([]byte(gbkBytesData))
 
-	url := `https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?access_token=24.01a7fba39af897d7e5c3141b28962bd4.2592000.1526178157.282335-11067381`
-	// url := fmt.Sprintf(`https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?access_token=%v`, GetToken())
+	// url := `https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?access_token=24.01a7fba39af897d7e5c3141b28962bd4.2592000.1526178157.282335-11067381`
+	url := fmt.Sprintf(`https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?access_token=%v`, GetToken())
 
 	request, err := http.NewRequest("POST", url, reader)
 
@@ -182,8 +183,8 @@ func (a Article) AiGetCategories() (tags AiCategories, err error) {
 
 	reader := bytes.NewReader([]byte(gbkBytesData))
 
-	url := `https://aip.baidubce.com/rpc/2.0/nlp/v1/topic?access_token=24.01a7fba39af897d7e5c3141b28962bd4.2592000.1526178157.282335-11067381`
-	// url := fmt.Sprintf(`https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?access_token=%v`, GetToken())
+	// url := `https://aip.baidubce.com/rpc/2.0/nlp/v1/topic?access_token=24.01a7fba39af897d7e5c3141b28962bd4.2592000.1526178157.282335-11067381`
+	url := fmt.Sprintf(`https://aip.baidubce.com/rpc/2.0/nlp/v1/topic?access_token=%v`, GetToken())
 
 	request, err := http.NewRequest("POST", url, reader)
 

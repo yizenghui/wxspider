@@ -2,6 +2,7 @@ package wxspider
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/yizenghui/sda/wechat"
 )
 
@@ -87,11 +89,13 @@ func PublishArticle() error {
 	rows := a.GetPlanPublushArticle()
 	for _, row := range rows {
 		e := PostArticle(row)
+		row.PublishAt = time.Now().Unix()
+		row.Save()
 		if e == nil {
-			row.PublishAt = time.Now().Unix()
-			row.Save()
 			// time.Sleep(time.Second)
 			log.Println("post", row.ID, row.Title, row.URL, row.PublishAt)
+		} else {
+			log.Println("post err", row.ID, row.Title, row.URL)
 		}
 	}
 	return nil
@@ -132,19 +136,33 @@ func PostArticle(article Article) error {
 	// tags category
 
 	// resp, err := client.PostForm("http://wxapi.readfollow.com/api/v1/article", data)
-	resp, err := client.PostForm("https://wx.readfollow.com/api/links/", data)
-	resp.Body.Close()
+	resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
+	// resp.Body.Close()
 	if err != nil {
 		// log.Println(" %s  ", err.Error)
 		return err
 	}
 
-	// formPost, err := goquery.NewDocumentFromReader(resp.Body)
+	formPost, err := goquery.NewDocumentFromReader(resp.Body)
 
-	// resp.Body.Close()
+	resp.Body.Close()
 
-	// postMsg, err := formPost.Html()
+	postMsg, err := formPost.Html()
 	// // // panic(err)
 	// log.Println(" %s  ", postMsg)
+	if err != nil {
+		// log.Println(" %s  ", err.Error)
+		return err
+	}
+	i64, err = strconv.ParseInt(postMsg, 10, 64)
+	if err != nil {
+		// log.Println(" %s  ", err.Error)
+		return err
+	}
+	fmt.Println("posted id", i64)
 	return nil
+	// if b := strings.Contains(postMsg, `mp.weixin.qq.com`); b == true {
+	// 	return nil
+	// }
+	// return errors.New(`发布失败了`)
 }
