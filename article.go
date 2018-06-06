@@ -41,6 +41,7 @@ func SpiderArticle(urlStr string) error {
 		a.Author = article.Author
 		a.PubAt = article.PubAt
 		a.Cont = article.Content
+		a.Body = article.ReadContent
 
 		a.Category = `其它`
 		// data["tags"] = []string{`php`, `golang`}
@@ -89,8 +90,8 @@ func PublishArticle() error {
 	rows := a.GetPlanPublushArticle()
 	for _, row := range rows {
 		e := PostArticle(row)
-		row.PublishAt = time.Now().Unix()
-		row.Save()
+		// row.PublishAt = time.Now().Unix()
+		// row.Save()
 		if e == nil {
 			// time.Sleep(time.Second)
 			log.Println("post", row.ID, row.Title, row.URL, row.PublishAt)
@@ -119,6 +120,7 @@ func PostArticle(article Article) error {
 	data["app_cover"] = []string{article.OriHead}
 	data["url"] = []string{article.URL}
 	data["intro"] = []string{article.Intro}
+	data["body"] = []string{article.Cont}
 	data["cover"] = []string{article.Cover}
 	data["author"] = []string{article.Author}
 	data["tags"] = []string{article.Tags}
@@ -136,10 +138,11 @@ func PostArticle(article Article) error {
 	// tags category
 
 	// resp, err := client.PostForm("http://wxapi.readfollow.com/api/v1/article", data)
-	resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
+	// resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
+	resp, err := client.PostForm("http://wxapi.cc:626/api/links/", data)
 	// resp.Body.Close()
 	if err != nil {
-		// log.Println(" %s  ", err.Error)
+		log.Println(" %s  ", err.Error)
 		return err
 	}
 
@@ -149,7 +152,7 @@ func PostArticle(article Article) error {
 
 	postMsg, err := formPost.Html()
 	// // // panic(err)
-	// log.Println(" %s  ", postMsg)
+	log.Println(" %s  ", postMsg)
 	if err != nil {
 		// log.Println(" %s  ", err.Error)
 		return err
