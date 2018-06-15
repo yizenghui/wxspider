@@ -3,6 +3,7 @@ package wxspider
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -10,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/yizenghui/sda/wechat"
 )
 
@@ -160,11 +160,16 @@ func PostArticle(article Article) error {
 		return err
 	}
 
-	formPost, err := goquery.NewDocumentFromReader(resp.Body)
-
+	// formPost, err := goquery.NewDocumentFromReader(resp.Body)
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
 	resp.Body.Close()
 
-	postMsg, err := formPost.Html()
+	//byte数组直接转成string，优化内存
+	postMsg := string(respBytes)
+	// postMsg, err := formPost.Html()
 	// // // panic(err)
 	// log.Println(" %s  ", postMsg)
 	if err != nil {
