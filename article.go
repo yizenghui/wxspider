@@ -101,8 +101,8 @@ func PublishArticle() error {
 	rows := a.GetPlanPublushArticle()
 	for _, row := range rows {
 		e := PostArticle(row)
-		row.PublishAt = time.Now().Unix()
-		row.Save()
+		// row.PublishAt = time.Now().Unix()
+		// row.Save()
 		if e == nil {
 			// time.Sleep(time.Second)
 			log.Println("post", row.ID, row.Title, row.URL, row.PublishAt)
@@ -137,9 +137,9 @@ func PostArticle(article Article) error {
 	data["tags"] = []string{article.Tags}
 	data["category"] = []string{article.Category}
 	data["categories"] = []string{article.Categories}
-	data["Copyright"] = []string{article.Copyright}
-	data["Video"] = []string{article.Video}
-	data["Audio"] = []string{article.Audio}
+	data["copyright"] = []string{article.Copyright}
+	data["video"] = []string{article.Video}
+	data["audio"] = []string{article.Audio}
 
 	i64, err := strconv.ParseInt(article.PubAt, 10, 64)
 	if err != nil {
@@ -152,8 +152,8 @@ func PostArticle(article Article) error {
 	// tags category
 
 	// resp, err := client.PostForm("http://wxapi.readfollow.com/api/v1/article", data)
-	resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
-	// resp, err := client.PostForm("http://wxapi.oo/api/links/", data)
+	// resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
+	resp, err := client.PostForm("http://wxapi.oo/api/links/", data)
 	// resp.Body.Close()
 	if err != nil {
 		// log.Println(" %v  ", err.Error)
@@ -178,6 +178,7 @@ func PostArticle(article Article) error {
 	}
 	i64, err = strconv.ParseInt(postMsg, 10, 64)
 	if err != nil {
+		log.Println(postMsg)
 		// log.Println(" %s  ", err.Error)
 		return err
 	}
