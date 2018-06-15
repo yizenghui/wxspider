@@ -42,8 +42,11 @@ func SpiderArticle(urlStr string) error {
 		a.PubAt = article.PubAt
 		a.Cont = article.Content
 		a.Body = article.ReadContent
-
+		a.Copyright = article.Copyright
+		a.Video = article.Video
+		a.Audio = article.Audio
 		a.Category = `其它`
+
 		// data["tags"] = []string{`php`, `golang`}
 		tags, err := a.AiGetTags()
 		if err == nil {
@@ -54,6 +57,14 @@ func SpiderArticle(urlStr string) error {
 			if len(tarr) > 0 {
 				tagStr := strings.Join(tarr, ",")
 				a.Tags = tagStr
+			}
+		}
+		// 增加夜读标签
+		if strings.Contains(a.Title, `夜读`) && a.Video != `` {
+			if a.Tags != `` {
+				a.Tags = fmt.Sprintf(`%v,夜读`, a.Tags)
+			} else {
+				a.Tags = `夜读`
 			}
 		}
 
@@ -90,8 +101,8 @@ func PublishArticle() error {
 	rows := a.GetPlanPublushArticle()
 	for _, row := range rows {
 		e := PostArticle(row)
-		// row.PublishAt = time.Now().Unix()
-		// row.Save()
+		row.PublishAt = time.Now().Unix()
+		row.Save()
 		if e == nil {
 			// time.Sleep(time.Second)
 			log.Println("post", row.ID, row.Title, row.URL, row.PublishAt)
@@ -126,6 +137,9 @@ func PostArticle(article Article) error {
 	data["tags"] = []string{article.Tags}
 	data["category"] = []string{article.Category}
 	data["categories"] = []string{article.Categories}
+	data["Copyright"] = []string{article.Copyright}
+	data["Video"] = []string{article.Video}
+	data["Audio"] = []string{article.Audio}
 
 	i64, err := strconv.ParseInt(article.PubAt, 10, 64)
 	if err != nil {
@@ -138,11 +152,11 @@ func PostArticle(article Article) error {
 	// tags category
 
 	// resp, err := client.PostForm("http://wxapi.readfollow.com/api/v1/article", data)
-	// resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
-	resp, err := client.PostForm("http://wxapi.oo/api/links/", data)
+	resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
+	// resp, err := client.PostForm("http://wxapi.oo/api/links/", data)
 	// resp.Body.Close()
 	if err != nil {
-		log.Println(" %s  ", err.Error)
+		// log.Println(" %v  ", err.Error)
 		return err
 	}
 
@@ -152,7 +166,7 @@ func PostArticle(article Article) error {
 
 	postMsg, err := formPost.Html()
 	// // // panic(err)
-	log.Println(" %s  ", postMsg)
+	// log.Println(" %s  ", postMsg)
 	if err != nil {
 		// log.Println(" %s  ", err.Error)
 		return err

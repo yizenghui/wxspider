@@ -29,6 +29,9 @@ type Article struct {
 	Tags       string // 标签字符串
 	Category   string // 一级分类
 	Categories string // 二级分类
+	Copyright  string // 已经 0,1,2   微小宝那 1 标识为原创
+	Video      string // 视频地址
+	Audio      string // 音频地址
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	DeletedAt  *time.Time `sql:"index"`
