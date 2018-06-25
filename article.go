@@ -60,7 +60,7 @@ func SpiderArticle(urlStr string) error {
 			}
 		}
 		// 增加夜读标签
-		if strings.Contains(a.Title, `夜读`) && a.Video != `` {
+		if strings.Contains(a.Title, `夜读`) && a.Audio != `` {
 			if a.Tags != `` {
 				a.Tags = fmt.Sprintf(`%v,夜读`, a.Tags)
 			} else {
@@ -100,10 +100,11 @@ func PublishArticle() error {
 	var a Article
 	rows := a.GetPlanPublushArticle()
 	for _, row := range rows {
-		e := PostArticle(row)
-		// row.PublishAt = time.Now().Unix()
-		// row.Save()
+		pistID, e := PostArticle(row)
 		if e == nil {
+			row.PublishAt = time.Now().Unix()
+			row.PostID = pistID
+			row.Save()
 			// time.Sleep(time.Second)
 			log.Println("post", row.ID, row.Title, row.URL, row.PublishAt)
 		} else {
@@ -121,7 +122,7 @@ func GetArticles() []Article {
 }
 
 //PostArticle 采集文章并保存到本地
-func PostArticle(article Article) error {
+func PostArticle(article Article) (int64, error) {
 
 	client := http.Client{}
 	data := make(url.Values)
@@ -144,7 +145,7 @@ func PostArticle(article Article) error {
 	i64, err := strconv.ParseInt(article.PubAt, 10, 64)
 	if err != nil {
 		// fmt.Println(err)
-		return errors.New("时间转化失败")
+		return 0, errors.New("时间转化失败")
 	}
 	pubAt := time.Unix(i64, 0).Format("2006-01-02 15:04:05")
 	data["pub_at"] = []string{pubAt}
@@ -152,18 +153,19 @@ func PostArticle(article Article) error {
 	// tags category
 
 	// resp, err := client.PostForm("http://wxapi.readfollow.com/api/v1/article", data)
-	// resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
-	resp, err := client.PostForm("http://wxapi.oo/api/links/", data)
+	resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
+	// resp, err := client.PostForm("http://wxapi.oo/api/links/", data)
+	// resp, err := client.PostForm("http://wxapi.cc:626/api/links/", data)
 	// resp.Body.Close()
 	if err != nil {
 		// log.Println(" %v  ", err.Error)
-		return err
+		return 0, err
 	}
 
 	// formPost, err := goquery.NewDocumentFromReader(resp.Body)
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	resp.Body.Close()
 
@@ -174,16 +176,16 @@ func PostArticle(article Article) error {
 	// log.Println(" %s  ", postMsg)
 	if err != nil {
 		// log.Println(" %s  ", err.Error)
-		return err
+		return 0, err
 	}
 	i64, err = strconv.ParseInt(postMsg, 10, 64)
 	if err != nil {
 		log.Println(postMsg)
 		// log.Println(" %s  ", err.Error)
-		return err
+		return 0, err
 	}
 	fmt.Println("posted id", i64)
-	return nil
+	return i64, nil
 	// if b := strings.Contains(postMsg, `mp.weixin.qq.com`); b == true {
 	// 	return nil
 	// }

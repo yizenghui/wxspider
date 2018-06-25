@@ -26,6 +26,7 @@ type Article struct {
 	OriHead    string // 原头像
 	SourceURL  string // 公众号原文地址
 	PublishAt  int64  `sql:"index" default:"0"` //采集器发布时间
+	PostID     int64  // 发布线上返回的id
 	Tags       string // 标签字符串
 	Category   string // 一级分类
 	Categories string // 二级分类
