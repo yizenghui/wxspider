@@ -33,6 +33,8 @@ type Article struct {
 	Copyright  string // 已经 0,1,2   微小宝那 1 标识为原创
 	Video      string // 视频地址
 	Audio      string // 音频地址
+	WxID       string // 微信公众号ID
+	WxIntro    string // 微信公众号介绍
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	DeletedAt  *time.Time `sql:"index"`

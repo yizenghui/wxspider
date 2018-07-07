@@ -43,6 +43,8 @@ func SpiderArticle(urlStr string) error {
 		a.Cont = article.Content
 		a.Body = article.ReadContent
 		a.Copyright = article.Copyright
+		a.WxID = article.WxID
+		a.WxIntro = article.WxIntro
 		a.Video = article.Video
 		a.Audio = article.Audio
 		a.Category = `其它`
@@ -135,6 +137,8 @@ func PostArticle(article Article) (int64, error) {
 	data["body"] = []string{article.Cont}
 	data["cover"] = []string{article.Cover}
 	data["author"] = []string{article.Author}
+	data["wxid"] = []string{article.WxID}
+	data["wxintro"] = []string{article.WxIntro}
 	data["tags"] = []string{article.Tags}
 	data["category"] = []string{article.Category}
 	data["categories"] = []string{article.Categories}
