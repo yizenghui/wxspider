@@ -110,6 +110,8 @@ func PublishArticle() error {
 			// time.Sleep(time.Second)
 			log.Println("post", row.ID, row.Title, row.URL, row.PublishAt)
 		} else {
+			row.PublishAt = -1
+			row.Save()
 			log.Println("post err", row.ID, row.Title, row.URL)
 		}
 	}
