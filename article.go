@@ -70,6 +70,23 @@ func SpiderArticle(urlStr string) error {
 			}
 		}
 
+		// // 增加音频标签
+		// if a.Audio != `` {
+		// 	if a.Tags != `` {
+		// 		a.Tags = fmt.Sprintf(`%v,音频`, a.Tags)
+		// 	} else {
+		// 		a.Tags = `音频`
+		// 	}
+		// }
+		// // 视频标签
+		// if a.Video != `` {
+		// 	if a.Tags != `` {
+		// 		a.Tags = fmt.Sprintf(`%v,视频`, a.Tags)
+		// 	} else {
+		// 		a.Tags = `视频`
+		// 	}
+		// }
+
 		categories, err := a.AiGetCategories()
 		if err == nil {
 			var carr1 []string
