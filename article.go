@@ -41,7 +41,7 @@ func SpiderArticle(urlStr string) error {
 		a.Author = article.Author
 		a.PubAt = article.PubAt
 		a.Cont = article.Content
-		a.Body = article.ReadContent
+		a.Body = article.MdContent
 		a.Copyright = article.Copyright
 		a.WxID = article.WxID
 		a.WxIntro = article.WxIntro
