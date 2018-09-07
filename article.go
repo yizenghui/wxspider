@@ -154,6 +154,7 @@ func PostArticle(article Article) (int64, error) {
 	data["url"] = []string{article.URL}
 	data["intro"] = []string{article.Intro}
 	data["body"] = []string{article.Cont}
+	data["mdbody"] = []string{article.Body}
 	data["cover"] = []string{article.Cover}
 	data["author"] = []string{article.Author}
 	data["wxid"] = []string{article.WxID}
@@ -176,8 +177,8 @@ func PostArticle(article Article) (int64, error) {
 	// tags category
 
 	// resp, err := client.PostForm("http://wxapi.readfollow.com/api/v1/article", data)
-	// resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
-	resp, err := client.PostForm("https://wx.readfollow.com/api/links/", data)
+	resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
+	// resp, err := client.PostForm("https://wx.readfollow.com/api/links/", data)
 	// resp, err := client.PostForm("http://wxapi.oo/api/links/", data)
 	// resp, err := client.PostForm("http://wxapi.cc:626/api/links/", data)
 	// resp.Body.Close()
