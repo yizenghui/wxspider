@@ -70,6 +70,19 @@ func SpiderArticle(urlStr string) error {
 			}
 		}
 
+		if len(article.Images) > 0 {
+			var imgarr []string
+			for _, img := range article.Images {
+				if CheckImage(img) {
+					imgarr = append(imgarr, img)
+				}
+			}
+			if len(imgarr) > 0 {
+				a.Images = strings.Join(imgarr, ";")
+				// log.Println(`img`, a.Images)
+			}
+		}
+
 		// // 增加音频标签
 		// if a.Audio != `` {
 		// 	if a.Tags != `` {
@@ -160,6 +173,7 @@ func PostArticle(article Article) (int64, error) {
 	data["wxid"] = []string{article.WxID}
 	data["wxintro"] = []string{article.WxIntro}
 	data["tags"] = []string{article.Tags}
+	data["images"] = []string{article.Images}
 	data["category"] = []string{article.Category}
 	data["categories"] = []string{article.Categories}
 	data["copyright"] = []string{article.Copyright}

@@ -35,6 +35,7 @@ type Article struct {
 	Audio      string // 音频地址
 	WxID       string // 微信公众号ID
 	WxIntro    string // 微信公众号介绍
+	Images     string
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	DeletedAt  *time.Time `sql:"index"`
