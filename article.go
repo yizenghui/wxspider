@@ -132,12 +132,12 @@ func PublishArticle() error {
 	var a Article
 	rows := a.GetPlanPublushArticle()
 	for _, row := range rows {
+		time.Sleep(time.Second)
 		pistID, e := PostArticle(row)
 		if e == nil {
 			row.PublishAt = time.Now().Unix()
 			row.PostID = pistID
 			row.Save()
-			// time.Sleep(time.Second)
 			log.Println("post", row.ID, row.Title, row.URL, row.PublishAt)
 		} else {
 			row.PublishAt = -1
