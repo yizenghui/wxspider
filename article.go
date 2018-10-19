@@ -132,7 +132,7 @@ func PublishArticle() error {
 	var a Article
 	rows := a.GetPlanPublushArticle()
 	for _, row := range rows {
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * 2)
 		pistID, e := PostArticle(row)
 		if e == nil {
 			row.PublishAt = time.Now().Unix()
@@ -159,6 +159,7 @@ func GetArticles() []Article {
 func PostArticle(article Article) (int64, error) {
 
 	client := http.Client{}
+	//
 	data := make(url.Values)
 	data["title"] = []string{article.Title}
 	data["app_id"] = []string{article.AppID}
@@ -196,6 +197,9 @@ func PostArticle(article Article) (int64, error) {
 	// resp, err := client.PostForm("http://wxapi.oo/api/links/", data)
 	// resp, err := client.PostForm("http://wxapi.cc:626/api/links/", data)
 	// resp.Body.Close()
+
+	// resp.Header.Add("Accept", "application/json")
+
 	if err != nil {
 		// log.Println(" %v  ", err.Error)
 		return 0, err
