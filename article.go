@@ -155,7 +155,7 @@ func GetArticles() []Article {
 	return rows
 }
 
-//PostArticle 采集文章并保存到本地
+//PostArticle 发布文章
 func PostArticle(article Article) (int64, error) {
 
 	// 获取系统配置(发送地址和授权令牌)
