@@ -84,7 +84,8 @@ var accessToken = ``
 //GetToken 获取baidu api token 临时用
 func GetToken() string {
 	if accessToken == `` {
-		c := NewClient(`kGMQC1RasBnD1bwQSSZInjUL`, `H6Mk1WUPRsko1BI6UOfbytvs0Y7DkH0p`)
+		cf := GetConf()
+		c := NewClient(cf.BaiDuAiConf.APIKey, cf.BaiDuAiConf.SecretKey)
 		c.Auth()
 		accessToken = c.AccessToken
 	}

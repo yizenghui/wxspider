@@ -158,8 +158,9 @@ func GetArticles() []Article {
 //PostArticle 采集文章并保存到本地
 func PostArticle(article Article) (int64, error) {
 
-	client := http.Client{}
-	//
+	// 获取系统配置(发送地址和授权令牌)
+	cf := GetConf()
+
 	data := make(url.Values)
 	data["title"] = []string{article.Title}
 	data["app_id"] = []string{article.AppID}
@@ -180,6 +181,8 @@ func PostArticle(article Article) (int64, error) {
 	data["copyright"] = []string{article.Copyright}
 	data["video"] = []string{article.Video}
 	data["audio"] = []string{article.Audio}
+	// post 时把授权密码放在数据包里面
+	data["authorization_token"] = []string{cf.PostConfig.AuthorizationToken}
 
 	i64, err := strconv.ParseInt(article.PubAt, 10, 64)
 	if err != nil {
@@ -189,16 +192,11 @@ func PostArticle(article Article) (int64, error) {
 	pubAt := time.Unix(i64, 0).Format("2006-01-02 15:04:05")
 	data["pub_at"] = []string{pubAt}
 
-	// tags category
+	// 把数据包post到配置的位置
+	// resp, err := client.PostForm(cf.PostConfig.ServeURL, data)
+	resp, err := http.NewRequest("POST", cf.PostConfig.ServeURL, strings.NewReader(data.Encode()))
 
-	// resp, err := client.PostForm("http://wxapi.readfollow.com/api/v1/article", data)
-	// resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
-	resp, err := client.PostForm("https://wechatrank.com/api/links/", data)
-	// resp, err := client.PostForm("http://wxapi.oo/api/links/", data)
-	// resp, err := client.PostForm("http://wxapi.cc:626/api/links/", data)
-	// resp.Body.Close()
-
-	// resp.Header.Add("Accept", "application/json")
+	resp.Header.Add("Authorization", fmt.Sprintf(`Bearer %v`, cf.PostConfig.AuthorizationToken))
 
 	if err != nil {
 		// log.Println(" %v  ", err.Error)

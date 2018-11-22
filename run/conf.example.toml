@@ -1,0 +1,9 @@
+# This is a TOML document. Boom.
+
+[BaiDuAiConf]
+api_key = "kGMQC1R***********InjUL"
+secret_key = "H6Mk*******************0Y7DkH0p"
+
+[PostConfig]
+serve_url = "http://examples.com/"
+authorization_token = ""

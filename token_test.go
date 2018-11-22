@@ -9,8 +9,8 @@ import (
 )
 
 func Test_GetToken(t *testing.T) {
-
-	c := NewClient(`FRVsHFvKNIaKn0jNbW33jftt`, `4pRzbjduWISmvC66HfoC1vPpGEdz7294`)
+	cf := GetConf()
+	c := NewClient(cf.BaiDuAiConf.APIKey, cf.BaiDuAiConf.SecretKey)
 	c.Auth()
 	t.Fatal(c.AccessToken)
 }
