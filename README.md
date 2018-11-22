@@ -7,7 +7,7 @@ https://wechatrank.com/
 
 ## 使用
 
-1. 匹配`conf.toml`
+1. 配置`conf.toml`
 2. 下载wxspider.exe并运行
 
 
