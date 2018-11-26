@@ -40,9 +40,13 @@ https://wechatrank.com/
 	serve_url = "http://examples.com/"
 	authorization_token = ""
 
+	[WebServe]
+	Port = 3355
 	
 ## 其他
 可以通过 http://localhost:3355 端口获取最新100条数据
+
+如需多开，请设置不同的端口
 
 
 
