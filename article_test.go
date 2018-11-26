@@ -20,9 +20,9 @@ func Test_PostArticle(t *testing.T) {
 func Test_PostArticleOne(t *testing.T) {
 	rows := GetArticles()
 	for _, row := range rows {
-		// e := PostArticle(row)
-		t.Fatal(row)
-		// t.Fatal(e)
+		_, e := PostArticle(row)
+		// t.Fatal(row)
+		t.Fatal(e)
 	}
 	t.Fatal(rows)
 }

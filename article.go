@@ -1,6 +1,7 @@
 package wxspider
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -155,9 +156,16 @@ func GetArticles() []Article {
 	return rows
 }
 
+//PostMessage 发布数据返回消息 成功返回 id 失败返回json
+type PostMessage struct {
+	ID      int64  `json:"id"`
+	Message string `json:"message"`
+}
+
 //PostArticle 发布文章
 func PostArticle(article Article) (int64, error) {
 
+	client := http.Client{}
 	// 获取系统配置(发送地址和授权令牌)
 	cf := GetConf()
 
@@ -182,7 +190,7 @@ func PostArticle(article Article) (int64, error) {
 	data["video"] = []string{article.Video}
 	data["audio"] = []string{article.Audio}
 	// post 时把授权密码放在数据包里面
-	data["authorization_token"] = []string{cf.PostConfig.AuthorizationToken}
+	// data["authorization_token"] = []string{cf.PostConfig.AuthorizationToken}
 
 	i64, err := strconv.ParseInt(article.PubAt, 10, 64)
 	if err != nil {
@@ -193,9 +201,11 @@ func PostArticle(article Article) (int64, error) {
 	data["pub_at"] = []string{pubAt}
 
 	// 把数据包post到配置的位置
-	// resp, err := client.PostForm(cf.PostConfig.ServeURL, data)
-	resp, err := http.NewRequest("POST", cf.PostConfig.ServeURL, strings.NewReader(data.Encode()))
+	resp, err := client.PostForm(cf.PostConfig.ServeURL, data)
+	// resp, err := http.NewRequest("POST", cf.PostConfig.ServeURL, strings.NewReader(data.Encode()))
 
+	// log.Println(cf.PostConfig.ServeURL)
+	resp.Header.Add("accept", `application/json`)
 	resp.Header.Add("Authorization", fmt.Sprintf(`Bearer %v`, cf.PostConfig.AuthorizationToken))
 
 	if err != nil {
@@ -211,7 +221,7 @@ func PostArticle(article Article) (int64, error) {
 	resp.Body.Close()
 
 	//byte数组直接转成string，优化内存
-	postMsg := string(respBytes)
+	// postMsg := string(respBytes)
 	// postMsg, err := formPost.Html()
 	// // // panic(err)
 	// log.Println(" %s  ", postMsg)
@@ -219,14 +229,27 @@ func PostArticle(article Article) (int64, error) {
 		// log.Println(" %s  ", err.Error)
 		return 0, err
 	}
-	i64, err = strconv.ParseInt(postMsg, 10, 64)
+
+	var pm PostMessage
+	err = json.Unmarshal(respBytes, &pm)
 	if err != nil {
-		log.Println(postMsg)
-		// log.Println(" %s  ", err.Error)
-		return 0, err
+		log.Println(string(respBytes))
+		return 0, errors.New(`服务器 返回数据出错`)
 	}
-	fmt.Println("posted id", i64)
-	return i64, nil
+	if pm.Message != `` {
+		return 0, errors.New(pm.Message)
+	}
+	fmt.Println(pm)
+	return pm.ID, nil
+	// i64, err = strconv.ParseInt(postMsg, 10, 64)
+	// if err != nil {
+	// 	log.Println(postMsg)
+	// 	// log.Println(" %s  ", err.Error)
+	// 	return 0, err
+	// }
+	// fmt.Println("posted id", i64)
+	// return i64, nil
+
 	// if b := strings.Contains(postMsg, `mp.weixin.qq.com`); b == true {
 	// 	return nil
 	// }
