@@ -6,12 +6,18 @@ import "github.com/BurntSushi/toml"
 type Config struct {
 	BaiDuAiConf BaiDuAiConf
 	PostConfig  PostConfig
+	WebServe    WebServe
 }
 
 //BaiDuAiConf 百度ai的密令
 type BaiDuAiConf struct {
 	APIKey    string `toml:"api_key"`
 	SecretKey string `toml:"secret_key"`
+}
+
+//WebServe 本地web服务器设置
+type WebServe struct {
+	Port int64 `toml:"port"`
 }
 
 //PostConfig 配置

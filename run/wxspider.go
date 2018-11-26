@@ -126,11 +126,16 @@ func postLocationArticle() {
 }
 
 func web() {
+
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, wxs.GetArticles())
 	})
-	e.Logger.Fatal(e.Start(":3355"))
+	// e.Logger.Fatal(e.Start(":3355"))
+
+	c2 := wxs.GetConf()
+
+	e.Logger.Fatal(e.Start(fmt.Sprintf(`:%v`, c2.WebServe.Port)))
 }
 
 func main() {

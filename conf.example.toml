@@ -7,3 +7,7 @@ secret_key = "H6Mk*******************0Y7DkH0p"
 [PostConfig]
 serve_url = "http://examples.com/"
 authorization_token = ""
+
+
+[WebServe]
+Port = 3355

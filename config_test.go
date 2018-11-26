@@ -4,5 +4,5 @@ import "testing"
 
 func Test_GetConf(t *testing.T) {
 	c2 := GetConf()
-	t.Fatal(c2)
+	t.Fatal(c2.WebServe.Port)
 }
