@@ -54,5 +54,8 @@ https://wechatrank.com/
 	github.com/Sirupsen/logrus
 	github.com/labstack/echo
 	github.com/Kevingong2013/wechat
+	golang.org/x/net
+	golang.org/x/text
+	golang.org/x/crypto
 
 ## 警告：本项目没有质保，请勿商用
