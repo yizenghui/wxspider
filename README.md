@@ -49,5 +49,10 @@ https://wechatrank.com/
 如需多开，请设置不同的端口
 
 
+## 依赖
+
+	github.com/Sirupsen/logrus
+	github.com/labstack/echo
+	github.com/Kevingong2013/wechat
 
 ## 警告：本项目没有质保，请勿商用
