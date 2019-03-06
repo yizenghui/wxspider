@@ -1,12 +1,9 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"regexp"
-	"strconv"
 	"time"
 
 	_ "github.com/CodyGuo/godaemon"
@@ -20,72 +17,6 @@ import (
 var logger = logrus.WithFields(logrus.Fields{
 	"module": "wxbot",
 })
-
-// Guard ...
-type guard struct {
-	bot *wechat.WeChat
-}
-
-func newGuard(bot *wechat.WeChat) *guard {
-	return &guard{bot}
-}
-
-// AddFriend ...
-func (g *guard) addFriend(username, content string) error {
-	return g.verifyUser(username, content, 2)
-}
-
-// AcceptAddFriend ...
-func (g *guard) acceptAddFriend(username, content string) error {
-	return g.verifyUser(username, content, 3)
-}
-
-func (g *guard) verifyUser(username, content string, status int) error {
-
-	url := fmt.Sprintf(`%s/webwxverifyuser?r=%s&%s`, g.bot.BaseURL, strconv.FormatInt(time.Now().Unix(), 10), g.bot.PassTicketKV())
-
-	data := map[string]interface{}{
-		`BaseRequest`:        g.bot.BaseRequest,
-		`Opcode`:             status,
-		`VerifyUserListSize`: 1,
-		`VerifyUserList`: map[string]string{
-			`Value`:            username,
-			`VerifyUserTicket`: ``,
-		},
-		`VerifyContent`:  content,
-		`SceneListCount`: 1,
-		`SceneList`:      33,
-		`skey`:           g.bot.BaseRequest.Skey,
-	}
-
-	bs, _ := json.Marshal(data)
-
-	var resp wechat.Response
-
-	err := g.bot.Excute(url, bytes.NewReader(bs), &resp)
-	if err != nil {
-		return err
-	}
-	if resp.IsSuccess() {
-		return nil
-	}
-	return resp.Error()
-}
-
-func (g *guard) autoAcceptAddFirendRequest(msg wechat.EventMsgData) {
-	if msg.MsgType == 37 {
-		rInfo := msg.OriginalMsg[`RecommendInfo`].(map[string]interface{})
-		err := g.addFriend(rInfo[`UserName`].(string),
-			msg.OriginalMsg[`Ticket`].(string))
-		if err != nil {
-			logger.Error(err)
-		}
-		err = g.bot.SendTextMsg(`新添加了一个好友`, `filehelper`)
-		if err != nil {
-			logger.Error(err)
-		}
-	}
-}
 
 func pushLink(u string) {
 	// fmt.Println("push url:", u)
@@ -143,22 +74,15 @@ func main() {
 	go web()
 	options := wechat.DefaultConfigure()
 	options.Debug = false
-	bot, err := wechat.AwakenNewBot(options)
+	// bot, err := wechat.AwakenNewBot(options)  //
+	bot, err := wechat.NewBot(options)
 	if err != nil {
 		panic(err)
 	}
-	g := newGuard(bot)
 
 	bot.Handle(`/msg/solo`, func(evt wechat.Event) {
 
 		data := evt.Data.(wechat.EventMsgData)
-		go g.autoAcceptAddFirendRequest(data)
-
-		// data := evt.Data.(wechat.EventMsgData)
-		// if data.MsgType == 49 {
-		// 	fmt.Println(`/msg/solo/` + data.OriginalMsg[`Url`].(string))
-		// 	go pushLink(data.OriginalMsg[`Url`].(string))
-		// }
 
 		go regAndPostWxLink(data.Content)
 		// fmt.Println(`/msg/solo/` + data.Content)
@@ -171,7 +95,7 @@ func main() {
 
 	bot.Handle(`/contact`, func(evt wechat.Event) {
 		data := evt.Data.(wechat.EventContactData)
-		fmt.Println(`/contact` + data.GGID)
+		fmt.Printf(`/contact/%v`, data.Contact.NickName)
 	})
 
 	bot.Handle(`/login`, func(arg2 wechat.Event) {
